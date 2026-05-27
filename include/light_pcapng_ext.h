@@ -89,6 +89,12 @@ typedef struct light_file_info {
 LIGHT_API light_pcapng LIGHT_API_CALL light_pcapng_open(const char* file_path, const char* mode);
 LIGHT_API light_pcapng LIGHT_API_CALL light_pcapng_create(light_file file, const char* mode, light_pcapng_file_info* info);
 
+// Open a zstd-compressed writer with a raw zstd level (ZSTD_minCLevel..22).
+// Bypasses the (level*2)+1 quantization. Use when you need fast/negative
+// levels for high-throughput captures. Returns NULL if the library was not
+// built with LIGHT_USE_ZSTD or the file cannot be opened.
+LIGHT_API light_pcapng LIGHT_API_CALL light_pcapng_open_write_zstd_raw(const char* file_path, int zstd_raw_level);
+
 LIGHT_API light_pcapng_file_info * LIGHT_API_CALL light_create_default_file_info();
 
 LIGHT_API light_pcapng_file_info * LIGHT_API_CALL light_create_file_info(const char *os_desc, const char *hardware_desc, const char *app_desc, const char *comment);

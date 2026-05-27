@@ -24,6 +24,9 @@
 #include "light_io.h"
 #include "light_debug.h"
 #include "light_util.h"
+#ifdef LIGHT_USE_ZSTD
+#include "light_io_zstd.h"
+#endif
 
 #include <stdlib.h>
 #include <string.h>
@@ -248,6 +251,25 @@ light_pcapng light_pcapng_open(const char* filename, const char* mode)
 		light_io_close(file);
 	}
 	return pcapng;
+}
+
+light_pcapng light_pcapng_open_write_zstd_raw(const char* file_path, int zstd_raw_level)
+{
+#ifdef LIGHT_USE_ZSTD
+	light_file file = light_io_zstd_open_write_raw(file_path, zstd_raw_level, 0);
+	if (file == NULL) {
+		return NULL;
+	}
+	light_pcapng pcapng = light_pcapng_create(file, "wb", NULL);
+	if (pcapng == NULL) {
+		light_io_close(file);
+	}
+	return pcapng;
+#else
+	(void)file_path;
+	(void)zstd_raw_level;
+	return NULL;
+#endif
 }
 
 light_pcapng_file_info* light_create_default_file_info()

@@ -339,4 +339,23 @@ light_file light_io_zstd_open(const char* filename, const char* mode)
 
 	return fd;
 }
+
+light_file light_io_zstd_open_write_raw(const char* filename, int raw_level, int num_workers)
+{
+	int min_level = ZSTD_minCLevel();
+	int max_level = ZSTD_maxCLevel();
+	if (raw_level < min_level) raw_level = min_level;
+	if (raw_level > max_level) raw_level = max_level;
+
+	FILE* file = fopen(filename, "wb");
+	if (!file) {
+		return NULL;
+	}
+
+	light_file fd = calloc(1, sizeof(struct light_file_t));
+	fd->context = get_zstd_compression_context(file, raw_level, num_workers);
+	fd->fn_write = &light_zstd_write;
+	fd->fn_close = &light_zstd_close_w;
+	return fd;
+}
 #endif // LIGHT_USE_ZSTD

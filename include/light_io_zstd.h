@@ -28,6 +28,12 @@
 
 light_file light_io_zstd_open(const char* filename, const char* mode);
 
+// Open a zstd writer with a raw compression level (ZSTD_minCLevel()..22),
+// bypassing the (level*2)+1 quantization done by light_io_zstd_open's mode-
+// string parser. num_workers maps to ZSTD_c_nbWorkers; pass 0 for single-
+// threaded.
+light_file light_io_zstd_open_write_raw(const char* filename, int raw_level, int num_workers);
+
 #endif // LIGHT_USE_ZSTD
 
 #endif // INCLUDE_LIGHT_IO_ZSTD_H_
